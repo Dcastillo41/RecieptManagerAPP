@@ -1,0 +1,28 @@
+trigger:
+  - main
+
+pool:
+  vmImage: "windows-latest"
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "12.x"
+    displayName: "Install Node.js"
+
+  - script: npm install
+    displayName: "Install dependencies"
+
+  - script: npm run build:dev
+    displayName: "Build project"
+
+  - task: AzureFileCopy@3
+    displayName: AzureBlob File Copy
+    inputs:
+      SourcePath: '$(system.defaultWorkingDirectory)/build'
+      azureSubscription: 'Mi primera subscripcion de Azure(1)(238ca010-f875-4ebe-b5d0-1006ab33e7b9)'
+      Destination: 'AzureBlob'
+      storage: 'recieptmanagerapp'
+      ContainerName: '$recieptmanagerweb'
+      sasTokenTimeOutInMinutes: '240'
+      cleanTargetBeforeCopy: true
